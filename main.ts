@@ -23,6 +23,13 @@ function gateCheck(text: string): void {
   if (/[\r\n]/.test(text)) {
     throw new Error("gate: review must be a single line");
   }
+  // ASCII-only: every character is one byte, so the character count the
+  // sealed gate sees is the same whether it counts code units, code
+  // points, or bytes. A non-ASCII review could pass one counting and
+  // fail another; this one cannot.
+  if (!/^[\x00-\x7F]*$/.test(text)) {
+    throw new Error("gate: review must be ASCII-only");
+  }
 }
 
 const outDir = "/output";
